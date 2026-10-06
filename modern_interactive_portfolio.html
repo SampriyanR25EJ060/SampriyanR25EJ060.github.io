@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sampriyan Mahendran | Portfolio</title>
+    <style>
+        :root {
+            --bg-dark: #0b0f19;
+            --card-bg: rgba(18, 24, 38, 0.75);
+            --card-border: rgba(56, 189, 248, 0.2);
+            --accent-cyan: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.4);
+            --accent-blue: #60a5fa;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        /* Canvas Particle Background */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Content Container */
+        .wrapper {
+            position: relative;
+            z-index: 10;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1.25rem;
+        }
+
+        /* Glassmorphism Header */
+        header {
+            text-align: center;
+            padding: 3.5rem 1.5rem 2.5rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px var(--card-border);
+            margin-bottom: 2.5rem;
+        }
+
+        .profile-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 0%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            color: var(--accent-cyan);
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .hero-desc {
+            color: var(--text-muted);
+            max-width: 650px;
+            margin: 0 auto 1.5rem;
+            font-size: 0.98rem;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary, .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.6rem 1.4rem;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0284c7, #38bdf8);
+            color: #04111d;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.7);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--card-border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            background: rgba(56, 189, 248, 0.05);
+            transform: translateY(-2px);
+        }
+
+        /* Sections */
+        section {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: var(--text-main);
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        h2::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 1.2rem;
+            background: var(--accent-cyan);
+            border-radius: 2px;
+            box-shadow: 0 0 10px var(--accent-cyan);
+        }
+
+        /* Projects Grid */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .project-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.25);
+        }
+
+        .project-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .project-card:hover::after {
+            opacity: 1;
+        }
+
+        .project-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        .project-desc {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .tag {
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            font-size: 0.72rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        /* Skills Badges */
+        .skills-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .skill-badge {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            transition: all 0.25s ease;
+            cursor: default;
+        }
+
+        .skill-badge:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            box-shadow: 0 0 12px var(--accent-glow);
+            transform: scale(1.05);
+        }
+
+        /* Contact Section */
+        .contact-links {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-card {
+            flex: 1;
+            min-width: 220px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            text-decoration: none;
+            color: var(--text-main);
+            transition: all 0.3s ease;
+        }
+
+        .contact-card:hover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(56, 189, 248, 0.2);
+        }
+
+        .contact-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(56, 189, 248, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-cyan);
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem 0 1rem;
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+
+        @media (max-width: 600px) {
+            .profile-title { font-size: 1.9rem; }
+            section { padding: 1.25rem; }
+            .wrapper { padding: 1rem 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="wrapper">
+        <header>
+            <h1 class="profile-title">Sampriyan Mahendran</h1>
+            <p class="subtitle">B.Tech CSIT Student @ REVA University | Machine Learning Engineer Aspirant</p>
+            <p class="hero-desc">Building foundational algorithms, procedural computational programs, and structured data solutions in C++, Python, and SQL. Target: Machine Learning Engineer (2031).</p>
+            <div class="cta-group">
+                <a href="#projects" class="btn-primary">View GitHub Projects</a>
+                <a href="#contact" class="btn-secondary">Connect With Me</a>
+            </div>
+        </header>
+
+        <section id="about">
+            <h2>About Me</h2>
+            <p style="color: var(--text-muted);">
+                I am a Computer Science & Information Technology student at REVA University, Bangalore, with a dedicated focus on Data Science, Machine Learning pipelines, and algorithmic problem-solving. My journey combines computational logic in low-level procedural programming (C/C++) with high-level statistical analysis in Python and SQL schema engineering. My long-term roadmap involves pursuing an M.Tech in Artificial Intelligence to become a specialized Machine Learning Engineer by 2031.
+            </p>
+        </section>
+
+        <section id="projects">
+            <h2>Featured Repositories & Projects</h2>
+            <div class="projects-grid">
+                
+                <div class="project-card">
+                    <div>
+                        <div class="project-title">1. Hello C Program</div>
+                        <p class="project-desc">Basic low-level C programming foundation, standard I/O execution, and initial repository workflow setup.</p>
+                        <div class="tag-container">
+                            <span class="tag">C</span>
+                            <span class="tag">Fundamentals</span>
+                            <span class="tag">Git</span>
+                        </div>
+                    </div>
+                    <a href="https://github.com/SampriyanR25EJ060/Portfolio-Building/blob/main/Hello.c" target="_blank" class="btn-secondary" style="width: 100%; text-align: center; justify-content: center;">View Code on GitHub</a>
+                </div>
+
+                <div class="project-card">
+                    <div>
+                        <div class="project-title">2. Line Editor in C</div>
+                        <p class="project-desc">A custom procedural line editor utilizing dynamic memory allocation, buffer management, and text manipulation operations.</p>
+                        <div class="tag-container">
+                            <span class="tag">C</span>
+                            <span class="tag">Data Structures</span>
+                            <span class="tag">Buffer Handling</span>
+                        </div>
+                    </div>
+                    <a href="https://github.com/SampriyanR25EJ060/Portfolio-Building/blob/main/Line_Editor.c" target="_blank" class="btn-secondary" style="width: 100%; text-align: center; justify-content: center;">View Code on GitHub</a>
+                </div>
+
+                <div class="project-card">
+                    <div>
+                        <div class="project-title">3. LeetCode Solutions</div>
+                        <p class="project-desc">Continuous repository of optimized algorithmic solutions written in C++ and Python, organized by time/space complexity.</p>
+                        <div class="tag-container">
+                            <span class="tag">C++</span>
+                            <span class="tag">Python</span>
+                            <span class="tag">DSA</span>
+                            <span class="tag">Optimization</span>
+                        </div>
+                    </div>
+                    <a href="https://github.com/SampriyanR25EJ060/leetcode-solutions" target="_blank" class="btn-secondary" style="width: 100%; text-align: center; justify-content: center;">View Repository</a>
+                </div>
+
+                <div class="project-card">
+                    <div>
+                        <div class="project-title">4. Portfolio Building Repo</div>
+                        <p class="project-desc">Main open-source repository hosting C codebases, academic lab modules, and structured portfolio deliverables.</p>
+                        <div class="tag-container">
+                            <span class="tag">C</span>
+                            <span class="tag">Portfolio</span>
+                            <span class="tag">Workflows</span>
+                        </div>
+                    </div>
+                    <a href="https://github.com/SampriyanR25EJ060/Portfolio-Building" target="_blank" class="btn-secondary" style="width: 100%; text-align: center; justify-content: center;">View Repository</a>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="skills">
+            <h2>Technical Competencies</h2>
+            <div class="skills-grid">
+                <span class="skill-badge">Python</span>
+                <span class="skill-badge">C++</span>
+                <span class="skill-badge">C Language</span>
+                <span class="skill-badge">SQL</span>
+                <span class="skill-badge">Data Science</span>
+                <span class="skill-badge">Machine Learning</span>
+                <span class="skill-badge">Data Structures & Algorithms</span>
+                <span class="skill-badge">Git & GitHub</span>
+                <span class="skill-badge">MLOps Aspirations</span>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2>Connect & Contact</h2>
+            <div class="contact-links">
+                <a href="https://github.com/SampriyanR25EJ060" target="_blank" class="contact-card">
+                    <div class="contact-icon">GH</div>
+                    <div>
+                        <div style="font-weight: bold;">GitHub Profile</div>
+                        <div style="font-size: 0.82rem; color: var(--text-muted);">@SampriyanR25EJ060</div>
+                    </div>
+                </a>
+                <a href="https://www.linkedin.com/in/sampriyan-mahendran-a60377384" target="_blank" class="contact-card">
+                    <div class="contact-icon">LN</div>
+                    <div>
+                        <div style="font-weight: bold;">LinkedIn Profile</div>
+                        <div style="font-size: 0.82rem; color: var(--text-muted);">Sampriyan Mahendran</div>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 Sampriyan Mahendran. Interactive Portfolio created with Canvas Motion Animation.</p>
+        </footer>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let particles = [];
+        const mouse = { x: null, y: null, radius: 120 };
+
+        function initCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            
+            particles = [];
+            const particleCount = Math.floor((width * height) / 12000);
+            
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    vx: (Math.random() - 0.5) * 0.8,
+                    vy: (Math.random() - 0.5) * 0.8,
+                    radius: Math.random() * 1.8 + 1,
+                    alpha: Math.random() * 0.5 + 0.3
+                });
+            }
+        }
+
+        window.addEventListener('resize', initCanvas);
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        window.addEventListener('mouseleave', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Update & Render Particles
+            for (let i = 0; i < particles.length; i++) {
+                let p = particles[i];
+
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (p.x < 0 || p.x > width) p.vx *= -1;
+                if (p.y < 0 || p.y > height) p.vy *= -1;
+
+                // Mouse interaction glow
+                if (mouse.x !== null && mouse.y !== null) {
+                    let dx = mouse.x - p.x;
+                    let dy = mouse.y - p.y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < mouse.radius) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(56, 189, 248, ${1 - dist / mouse.radius})`;
+                        ctx.lineWidth = 0.8;
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(mouse.x, mouse.y);
+                        ctx.stroke();
+                    }
+                }
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(56, 189, 248, ${p.alpha})`;
+                ctx.fill();
+
+                // Connect nearby particles
+                for (let j = i + 1; j < particles.length; j++) {
+                    let p2 = particles[j];
+                    let dx = p.x - p2.x;
+                    let dy = p.y - p2.y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 100) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(56, 189, 248, ${(1 - dist / 100) * 0.25})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        initCanvas();
+        animate();
+    </script>
+</body>
+</html>
